@@ -38,6 +38,14 @@ update_feeds() {
         echo "src-git turboacc https://github.com/chenmozhijin/turboacc" >>"$FEEDS_PATH"
     fi
 
+    # Lucky（优先级最高，插到顶部）
+    if ! grep -q "lucky" "$FEEDS_PATH"; then
+        sed -i '1i src-git lucky https://github.com/gdy666/luci-app-lucky.git;main' "$FEEDS_PATH"
+    fi
+    # 清理旧缓存（防止冲突）
+    rm -rf "$BUILD_DIR/feeds/lucky"
+    rm -rf "$BUILD_DIR/package/feeds/lucky"
+
     if [ ! -f "$BUILD_DIR/include/bpf.mk" ]; then
         touch "$BUILD_DIR/include/bpf.mk"
     fi
@@ -64,4 +72,6 @@ install_feeds() {
     done
     # 强制安装 TurboACC
     ./scripts/feeds install -f -a -p turboacc
+
+    ./scripts/feeds install -f -p lucky luci-app-lucky
 }
